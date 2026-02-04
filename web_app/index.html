@@ -5,62 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Casino Bot Mini-App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             margin: 0;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            color: white;
+            min-height: 100vh;
         }
         .container {
-            max-width: 600px;
-            width: 100%;
-            background: white;
+            max-width: 400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
         h1 {
             text-align: center;
-            color: #333;
+            margin-bottom: 20px;
+            font-size: 2em;
         }
         .balance {
-            font-size: 18px;
-            margin-bottom: 20px;
+            font-size: 1.5em;
             text-align: center;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
         }
         .button {
             display: block;
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            background-color: #007bff;
+            padding: 12px;
+            margin: 8px 0;
+            background: #4CAF50;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
+            transition: background 0.3s;
         }
         .button:hover {
-            background-color: #0056b3;
+            background: #45a049;
+        }
+        .button.secondary {
+            background: #2196F3;
+        }
+        .button.secondary:hover {
+            background: #0b7dda;
         }
         .input-group {
             margin: 10px 0;
+            display: flex;
+            gap: 10px;
         }
         input {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-        }
-        .output {
-            margin-top: 20px;
+            flex: 1;
             padding: 10px;
-            background: #f8f9fa;
+            border: none;
             border-radius: 5px;
-            white-space: pre-wrap;
+        }
+        .tokens {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .token-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
         }
     </style>
 </head>
@@ -69,17 +95,44 @@
         <h1>🎰 Casino Bot</h1>
         <div class="balance" id="balance">Завантаження...</div>
 
-        <button class="button" onclick="showHelp()">Допомога</button>
-        <button class="button" onclick="showShop()">Магазин</button>
-        <button class="button" onclick="showTop()">Топ гравців</button>
-        <button class="button" onclick="showMyTokens()">Мої токени</button>
-
-        <div class="input-group">
-            <input type="text" id="commandInput" placeholder="Введіть команду (наприклад, /create_coin назва)">
+        <div class="section">
+            <h2>Дії</h2>
+            <button class="button" onclick="showHelp()">Допомога</button>
+            <button class="button secondary" onclick="showTop()">Топ гравців</button>
         </div>
-        <button class="button" onclick="executeCommand()">Виконати</button>
 
-        <div class="output" id="output"></div>
+        <div class="section">
+            <h2>Токени</h2>
+            <button class="button" onclick="createToken()">Створити токен</button>
+            <div class="input-group">
+                <input type="text" id="tokenName" placeholder="Назва токена">
+                <input type="number" id="tokenAmount" placeholder="Сума">
+                <button class="button secondary" onclick="buyToken()">Купити</button>
+            </div>
+            <div class="input-group">
+                <input type="text" id="sellTokenName" placeholder="Назва токена">
+                <input type="number" id="sellAmount" placeholder="Сума">
+                <button class="button secondary" onclick="sellToken()">Продати</button>
+            </div>
+            <div id="myTokens" class="tokens">Завантаження токенів...</div>
+        </div>
+
+        <div class="section">
+            <h2>Казино</h2>
+            <div class="input-group">
+                <input type="number" id="diceAmount" placeholder="Сума ставки">
+                <button class="button" onclick="playDice()">Грати в кості</button>
+            </div>
+            <button class="button secondary" onclick="playDiceBot()">Проти бота</button>
+            <button class="button secondary" onclick="robUser()">Пограбувати</button>
+        </div>
+
+        <div class="section">
+            <h2>Магазин</h2>
+            <button class="button" onclick="showShop()">Переглянути магазин</button>
+        </div>
+
+        <div id="output" style="margin-top: 20px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 5px;"></div>
     </div>
 
     <script src="script.js"></script>

@@ -257,3 +257,15 @@ async def get_top_coins(limit=10):
     async with aiosqlite.connect(DATABASE_PATH) as db:
         cursor = await db.execute('SELECT ticker, total_volume FROM coins ORDER BY total_volume DESC LIMIT ?', (limit,))
         return await cursor.fetchall()
+
+async def get_user_balance(user_id):
+    async with aiosqlite.connect(DATABASE_PATH) as db:
+        cursor = await db.execute('SELECT balance FROM users WHERE id = ?', (user_id,))
+        row = await cursor.fetchone()
+        return row[0] if row else 0
+
+async def get_user_tokens(user_id):
+    async with aiosqlite.connect(DATABASE_PATH) as db:
+        cursor = await db.execute('SELECT ticker, amount FROM user_inventory WHERE user_id = ?', (user_id,))
+        rows = await cursor.fetchall()
+        return [{'name': row[0], 'amount': row[1]} for row in rows]

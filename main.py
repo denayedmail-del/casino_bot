@@ -1,9 +1,10 @@
 import asyncio
 import json
+from fastapi import FastAPI, HTTPException
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, WebAppInfo, InlineKeyboardMarkup, InlineKeyboardButton
 from config import BOT_TOKEN, ADMIN_ID
-from database import init_db, get_user, create_user, get_top_coins, get_top_creators, get_global_var
+from database import init_db, get_user, create_user, get_top_coins, get_top_creators, get_global_var, get_user_balance, get_user_tokens, buy_token, sell_token, create_coin
 from middlewares.reaction_middleware import ReactionMiddleware
 from handlers.casino_games import router as casino_router
 from handlers.shop_effects import router as shop_router
@@ -15,6 +16,25 @@ import logging
 
 # Set logging
 logging.basicConfig(level=logging.INFO)
+
+# FastAPI app for web app API
+app = FastAPI()
+
+@app.get("/api/user/{user_id}")
+async def get_user_data(user_id: int):
+    user = await get_user(user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    balance = await get_user_balance(user_id)
+    tokens = await get_user_tokens(user_id)
+    return {"balance": balance, "tokens": tokens}
+
+@app.post("/api/command")
+async def process_command(data: dict):
+    user_id = data.get("user_id")
+    command = data.get("command")
+    # Simulate processing (integrate with handlers later)
+    return {"response": f"Processed: {command}"}
 
 async def morning_report(bot: Bot):
     # Send to a channel or admin, for now to admin
@@ -99,4 +119,7 @@ async def main():
     await dp.start_polling(bot)
 
 if __name__ == '__main__':
+    import uvicorn
+    # Run bot in asyncio
     asyncio.run(main())
+    # For API, run separately: uvicorn main:app --host 0.0.0.0 --port 8001
