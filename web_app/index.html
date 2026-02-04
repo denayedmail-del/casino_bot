@@ -88,6 +88,15 @@
             justify-content: space-between;
             margin: 5px 0;
         }
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
@@ -99,11 +108,19 @@
             <h2>Дії</h2>
             <button class="button" onclick="showHelp()">Допомога</button>
             <button class="button secondary" onclick="showTop()">Топ гравців</button>
+            <div class="input-group">
+                <input type="number" id="giveAmount" placeholder="Сума">
+                <input type="text" id="giveTarget" placeholder="Username отримувача">
+                <button class="button secondary" onclick="giveMoney()">Дати гроші</button>
+            </div>
         </div>
 
         <div class="section">
             <h2>Токени</h2>
-            <button class="button" onclick="createToken()">Створити токен</button>
+            <div class="input-group">
+                <input type="text" id="createTokenName" placeholder="Назва токена">
+                <button class="button" onclick="createToken()">Створити токен</button>
+            </div>
             <div class="input-group">
                 <input type="text" id="tokenName" placeholder="Назва токена">
                 <input type="number" id="tokenAmount" placeholder="Сума">
@@ -121,15 +138,33 @@
             <h2>Казино</h2>
             <div class="input-group">
                 <input type="number" id="diceAmount" placeholder="Сума ставки">
-                <button class="button" onclick="playDice()">Грати в кості</button>
+                <input type="text" id="diceTarget" placeholder="Username противника (для дуелі)">
+                <button class="button" onclick="playDice()">Грати в кості (дуель)</button>
             </div>
-            <button class="button secondary" onclick="playDiceBot()">Проти бота</button>
-            <button class="button secondary" onclick="robUser()">Пограбувати</button>
+            <div class="input-group">
+                <input type="number" id="diceBotAmount" placeholder="Сума ставки">
+                <button class="button secondary" onclick="playDiceBot()">Проти бота</button>
+            </div>
+            <div class="input-group">
+                <input type="text" id="robTarget" placeholder="Username для пограбування">
+                <button class="button secondary" onclick="robUser()">Пограбувати</button>
+            </div>
         </div>
 
         <div class="section">
             <h2>Магазин</h2>
-            <button class="button" onclick="showShop()">Переглянути магазин</button>
+            <div class="shop-item">
+                <span>VIP статус - 500 💰</span>
+                <button class="button" onclick="buyItem('VIP статус')">Купити</button>
+            </div>
+            <div class="shop-item">
+                <span>Бустер прибутку - 300 💰</span>
+                <button class="button" onclick="buyItem('Бустер прибутку')">Купити</button>
+            </div>
+            <div class="shop-item">
+                <span>Захист від грабежу - 200 💰</span>
+                <button class="button" onclick="buyItem('Захист від грабежу')">Купити</button>
+            </div>
         </div>
 
         <div id="output" style="margin-top: 20px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 5px;"></div>

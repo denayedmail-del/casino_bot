@@ -50,9 +50,10 @@ function displayTokens(tokens) {
 function showHelp() {
     const helpText = `Допомога:
 - Створюйте токени та торгуйте ними
-- Грайте в казино
+- Грайте в казино з друзями або ботом
 - Купуйте речі в магазині
-- Дивіться топ гравців`;
+- Дивіться топ гравців
+- Давайте гроші іншим`;
     showOutput(helpText);
 }
 
@@ -65,12 +66,23 @@ async function showTop() {
     showOutput(topText);
 }
 
+// Give money
+function giveMoney() {
+    const amount = document.getElementById('giveAmount').value;
+    const target = document.getElementById('giveTarget').value;
+    if (amount && target) {
+        sendAction('give', { amount: parseFloat(amount), target: target });
+        showOutput(`Дано ${amount} користувачу ${target}`);
+        loadUserData();
+    }
+}
+
 // Create token
 function createToken() {
-    const name = prompt('Введіть назву токена:');
+    const name = document.getElementById('createTokenName').value;
     if (name) {
-        sendToBot('create_coin', { name: name });
-        showOutput('Токен створено!');
+        sendAction('create_coin', { name: name });
+        showOutput(`Токен ${name} створено!`);
         loadUserData();
     }
 }
@@ -80,7 +92,7 @@ function buyToken() {
     const name = document.getElementById('tokenName').value;
     const amount = document.getElementById('tokenAmount').value;
     if (name && amount) {
-        sendToBot('buy', { name: name, amount: parseFloat(amount) });
+        sendAction('buy', { name: name, amount: parseFloat(amount) });
         showOutput(`Куплено ${amount} ${name}`);
         loadUserData();
     }
@@ -91,46 +103,60 @@ function sellToken() {
     const name = document.getElementById('sellTokenName').value;
     const amount = document.getElementById('sellAmount').value;
     if (name && amount) {
-        sendToBot('sell', { name: name, amount: parseFloat(amount) });
+        sendAction('sell', { name: name, amount: parseFloat(amount) });
         showOutput(`Продано ${amount} ${name}`);
         loadUserData();
     }
 }
 
-// Play dice
+// Play dice (duel)
 function playDice() {
     const amount = document.getElementById('diceAmount').value;
-    if (amount) {
-        sendToBot('dice', { amount: parseFloat(amount) });
-        showOutput('Граємо в кості!');
+    const target = document.getElementById('diceTarget').value;
+    if (amount && target) {
+        sendAction('dice', { amount: parseFloat(amount), target: target });
+        showOutput(`Запрошено ${target} на дуель в кості на ${amount}`);
     }
 }
 
 // Play dice against bot
 function playDiceBot() {
-    const amount = document.getElementById('diceAmount').value;
+    const amount = document.getElementById('diceBotAmount').value;
     if (amount) {
-        sendToBot('dice_bot', { amount: parseFloat(amount) });
-        showOutput('Гра проти бота!');
+        sendAction('dice_bot', { amount: parseFloat(amount) });
+        showOutput(`Гра проти бота на ${amount}!`);
     }
 }
 
 // Rob user
 function robUser() {
-    const target = prompt('Введіть username для пограбування:');
+    const target = document.getElementById('robTarget').value;
     if (target) {
-        sendToBot('rob', { target: target });
+        sendAction('rob', { target: target });
         showOutput(`Спроба пограбувати ${target}`);
     }
 }
 
-// Show shop
-function showShop() {
-    const shopText = `Магазин:
-1. VIP статус - 500 💰
-2. Бустер прибутку - 300 💰
-3. Захист від грабежу - 200 💰`;
-    showOutput(shopText);
+// Buy item from shop
+function buyItem(item) {
+    sendAction('buy_item', { item: item });
+    showOutput(`Куплено ${item}!`);
+    loadUserData();
+}
+
+// Send action to API
+async function sendAction(action, params) {
+    try {
+        const response = await fetch(`${API_BASE}/api/action`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId, action: action, params: params })
+        });
+        const data = await response.json();
+        console.log(data.response);
+    } catch (error) {
+        console.error('Error sending action:', error);
+    }
 }
 
 // Show output
